@@ -14,4 +14,6 @@ kernel
 kernelmemfs
 mkfs
 .gdbinit
-.vagrant
+
+.ycm_extra_conf.py*
+.color_coded
