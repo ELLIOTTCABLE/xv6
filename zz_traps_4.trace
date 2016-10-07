@@ -1,0 +1,5 @@
+$ zz_traps_4
+initial: 0
+after printf(): 12
+before / after uptime(): 32/34
+[3] total traps to OS: 66

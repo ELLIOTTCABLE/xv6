@@ -168,7 +168,7 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
-	_zz_traps_1 _zz_traps_2\
+	_zz_traps_1 _zz_traps_2 _zz_traps_3 _zz_traps_4\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
