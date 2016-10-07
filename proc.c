@@ -210,7 +210,7 @@ exit(void)
   }
 
   if(p->traps != -1){
-    cprintf("[%i] total traps to OS: %i", p->pid, p->traps);
+    cprintf("[%d] total traps to OS: %d", p->pid, p->traps);
     cprintf("\n");
   }
 
