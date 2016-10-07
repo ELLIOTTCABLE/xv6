@@ -99,7 +99,7 @@ userinit(void)
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
-  p->numcalls = -1;
+  p->traps = -1;
 
   p->state = RUNNABLE;
 }
@@ -148,7 +148,7 @@ fork(void)
   np->parent = proc;
   *np->tf = *proc->tf;
 
-  np->numcalls = -1;
+  np->traps = -1;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -209,8 +209,8 @@ exit(void)
     }
   }
 
-  if(p->numcalls != -1){
-    cprintf("[%i] total syscalls: %i", p->pid, p->numcalls);
+  if(p->traps != -1){
+    cprintf("[%i] total traps to OS: %i", p->pid, p->traps);
     cprintf("\n");
   }
 

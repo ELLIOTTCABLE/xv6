@@ -79,7 +79,7 @@ argstr(int n, char **pp)
 
 extern int sys_chdir(void);
 extern int sys_close(void);
-extern int sys_count(void);
+extern int sys_traps(void);
 extern int sys_dup(void);
 extern int sys_exec(void);
 extern int sys_exit(void);
@@ -122,7 +122,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-[SYS_count]   sys_count,
+[SYS_traps]   sys_traps,
 };
 
 void
@@ -132,9 +132,6 @@ syscall(void)
 
   num = proc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    if (proc->numcalls != -1)
-      proc->numcalls++;
-
     proc->tf->eax = syscalls[num]();
   } else {
     cprintf("%d %s: unknown sys call %d\n",

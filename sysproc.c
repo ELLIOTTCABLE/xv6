@@ -90,14 +90,14 @@ sys_uptime(void)
   return xticks;
 }
 
-// Enable syscall counting (will print upon process-exit), and return the number
-// of syscalls since start. The first call to this will not be counted (i.e.
+// Enable OS-trap counting (will print upon process-exit), and return the number
+// of traps since first called. The first call to this will not be counted (i.e.
 // counting starts *after* the first call to `count`.)
 int
-sys_count(void)
+sys_traps(void)
 {
-  if(proc->numcalls == -1)
-    proc->numcalls = 0;
+  if(proc->traps == -1)
+    proc->traps = 0;
 
-  return proc->numcalls;
+  return proc->traps;
 }
