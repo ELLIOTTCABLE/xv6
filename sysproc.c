@@ -89,3 +89,15 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// Enable syscall counting (will print upon process-exit), and return the number
+// of syscalls since start. The first call to this will not be counted (i.e.
+// counting starts *after* the first call to `count`.)
+int
+sys_count(void)
+{
+  if(proc->numcalls == -1)
+    proc->numcalls = 0;
+
+  return proc->numcalls;
+}

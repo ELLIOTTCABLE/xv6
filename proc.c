@@ -99,6 +99,8 @@ userinit(void)
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
+  p->numcalls = -1;
+
   p->state = RUNNABLE;
 }
 
@@ -145,6 +147,8 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
+
+  np->numcalls = -1;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -203,6 +207,11 @@ exit(void)
       if(p->state == ZOMBIE)
         wakeup1(initproc);
     }
+  }
+
+  if(p->numcalls != -1){
+    cprintf("[%i] total syscalls: %i", p->pid, p->numcalls);
+    cprintf("\n");
   }
 
   // Jump into the scheduler, never to return.
