@@ -79,6 +79,7 @@ argstr(int n, char **pp)
 
 extern int sys_chdir(void);
 extern int sys_close(void);
+extern int sys_ticks(void);
 extern int sys_traps(void);
 extern int sys_dup(void);
 extern int sys_exec(void);
@@ -123,6 +124,7 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_traps]   sys_traps,
+[SYS_ticks]   sys_ticks,
 };
 
 void

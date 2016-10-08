@@ -66,6 +66,8 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   int traps;                   // Number of traps to OS -ec
+  uint created;                // Number of ticks when created
+  int printing_duration;       // ugh this is horrendous
   char name[16];               // Process name (debugging)
 };
 

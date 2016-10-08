@@ -78,6 +78,7 @@ found:
 void
 userinit(void)
 {
+  uint now;
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
   
@@ -100,6 +101,12 @@ userinit(void)
   p->cwd = namei("/");
 
   p->traps = -1;
+
+  acquire(&tickslock);
+  now = ticks;
+  release(&tickslock);
+  p->created = now;
+  p->printing_duration = 0;
 
   p->state = RUNNABLE;
 }
@@ -131,6 +138,7 @@ int
 fork(void)
 {
   int i, pid;
+  uint now;
   struct proc *np;
 
   // Allocate process.
@@ -149,6 +157,12 @@ fork(void)
   *np->tf = *proc->tf;
 
   np->traps = -1;
+
+  acquire(&tickslock);
+  now = ticks;
+  release(&tickslock);
+  np->created = now;
+  np->printing_duration = 0;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -177,6 +191,7 @@ void
 exit(void)
 {
   struct proc *p;
+  uint now;
   int fd;
 
   if(proc == initproc)
@@ -211,6 +226,14 @@ exit(void)
 
   if(proc->traps != -1){
     cprintf("[%d] total traps to OS: %d", proc->pid, proc->traps);
+    cprintf("\n");
+  }
+  if(proc->printing_duration != 0){
+    acquire(&tickslock);
+    now = ticks;
+    release(&tickslock);
+
+    cprintf("[%d] (existed for %d ticks)", proc->pid, now - proc->created);
     cprintf("\n");
   }
 
@@ -465,7 +488,7 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s", p->pid, state, p->name);
+    cprintf("%d %s %d %s", p->pid, state, p->created, p->name);
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)

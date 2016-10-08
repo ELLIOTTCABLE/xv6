@@ -101,3 +101,11 @@ sys_traps(void)
 
   return proc->traps;
 }
+
+// Enable printing of the duration of the calling process, in kernel-clock
+// ticks, upon its exiting.
+void
+sys_ticks(void)
+{
+  proc->printing_duration = 1;
+}
