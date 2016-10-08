@@ -1,0 +1,6 @@
+$ zz_ticks_and_traps
+initial: 0
+after printf(): 12
+before / after uptime(): 32/34
+[3] total traps to OS: 66
+[3] (existed for 7 ticks)

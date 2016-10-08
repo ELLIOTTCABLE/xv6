@@ -169,7 +169,8 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_zz_traps_1 _zz_traps_2 _zz_traps_3 _zz_traps_4\
-	_zz_ticks_1\
+	_zz_ticks_1 _zz_ticks_2 _zz_ticks_3\
+	_zz_ticks_and_traps\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
