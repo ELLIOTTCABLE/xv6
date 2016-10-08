@@ -457,6 +457,7 @@ procdump(void)
   char *state;
   uint pc[10];
   
+  cprintf("\n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
