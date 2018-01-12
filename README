@@ -1,49 +1,57 @@
-xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
-Version 6 (v6).  xv6 loosely follows the structure and style of v6,
-but is implemented for a modern x86-based multiprocessor using ANSI C.
+xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix Version 6 (v6). xv6 loosely
+follows the structure and style of v6, but is implemented for a modern x86-based multiprocessor
+using ANSI C.
 
-ACKNOWLEDGMENTS
+----
 
-xv6 is inspired by John Lions's Commentary on UNIX 6th Edition (Peer
-to Peer Communications; ISBN: 1-57398-013-7; 1st edition (June 14,
-2000)). See also http://pdos.csail.mit.edu/6.828/2014/xv6.html, which
-provides pointers to on-line resources for v6.
+THIS VERSION OF xv6 IS MODIFIED FOR A CLASS BY ELLIOTTCABLE; ALL COPYRIGHTS ARE RETAINED BY THEIR
+ORIGINAL OWNERS.
 
-xv6 borrows code from the following sources:
-    JOS (asm.h, elf.h, mmu.h, bootasm.S, ide.c, console.c, and others)
-    Plan 9 (entryother.S, mp.h, mp.c, lapic.c)
-    FreeBSD (ioapic.c)
-    NetBSD (console.c)
+### Running
+This xv6 is developed alongside a `Vagrantfile` for [Vagrant][], allowing you to construct and
+configure an environment to compile, emulate, and debug xv6 with a single command.
 
-The following people have made contributions:
-    Russ Cox (context switching, locking)
-    Cliff Frey (MP)
-    Xiao Yu (MP)
-    Nickolai Zeldovich
-    Austin Clements
+Having installed Vagrant on your system according to the instructions for your platform, the
+following will clone my xv6 work, download and configure an Ubuntu virtual-machine to act as
+emulation host, and give you a command-line on said emulation-host:
 
-In addition, we are grateful for the bug reports and patches contributed by
-Silas Boyd-Wickizer, Peter Froehlich, Shivam Handa, Anders Kaseorg, Eddie
-Kohler, Yandong Mao, Hitoshi Mitake, Carmi Merimovich, Joel Nider, Greg Price,
-Eldar Sehayek, Yongming Shen, Stephen Tu, and Zouchangwei.
+    git clone https://github.com/ELLIOTTCABLE/xv6.git
+    curl -O https://raw.githubusercontent.com/ELLIOTTCABLE/Homework/master/CS450/Vagrantfile
+    vagrant up  # (This may take a while!)
+    vagrant ssh
 
-The code in the files that constitute xv6 is
-Copyright 2006-2014 Frans Kaashoek, Robert Morris, and Russ Cox.
+Once inside the host, the xv6 sources will be at `/vagrant/xv6`; from there, you can follow the
+normal xv6 instructions. For instance, to run with a command-line console,
 
-ERROR REPORTS
+    cd /vagrant/xv6
+    make && make qemu-nox
 
-If you spot errors or have suggestions for improvement, please send
-email to Frans Kaashoek and Robert Morris (kaashoek,rtm@csail.mit.edu). 
+   [Vagrant]: <https://vagrantup.com>
 
-BUILDING AND RUNNING XV6
+### Modification documentation
+Currently, this fork of xv6 includes two trivial new system calls: `traps()` (syscall 22) and
+`ticks()` (syscall 23).
 
-To build xv6 on an x86 ELF machine (like Linux or FreeBSD), run "make".
-On non-x86 or non-ELF machines (like OS X, even on x86), you will
-need to install a cross-compiler gcc suite capable of producing x86 ELF
-binaries.  See http://pdos.csail.mit.edu/6.828/2014/tools.html.
-Then run "make TOOLPREFIX=i386-jos-elf-".
+#### `traps()`
+When invoked from a userland program, this will cause the kernel to begin a count of every trap-
+interrupt that is handled by the O.S. while your process is running. The first invocation thereof
+will return `0`, indicating that counting has started for any following traps-to-O.S. Subsequent
+invocations will return the count of traps thus far.
 
-To run xv6, install the QEMU PC simulators.  To run in QEMU, run "make qemu".
+At the termination of any program for which counting is enabled, a line will be printed to the
+console, detailing the PID of the process, and the final number of traps counted.
 
-To create a typeset version of the code, run "make xv6.pdf".  This
-requires the "mpage" utility.  See http://www.mesa.nl/pub/mpage/.
+#### `ticks()`
+Similarly to the above, this will enable printing of the existence-duration of the calling program,
+in terms of O.S. timer-interrupt ticks, at program's exit. It does not, however, expose real-time
+tick information to the caller; and thus, it has no return value, and subsequent invocations have no
+further effect.
+
+### Tests
+Unfortunately, automated testing of a kernel being emulated by `qemu` turned out to be something of
+a challenge; so the (admittedly trivial) tests for this new functionality are simply provided as a
+set of simplistic programs demonstrating invocation of these new syscalls, and an associated set of
+tracefiles, showing examples of the sort of output each of those programs will display (although the
+precise counts therein will vary on each invocation, for obvious reasons.)
+
+See `zz_*.c`, and for each, the corresponding `zz_*.trace`.
